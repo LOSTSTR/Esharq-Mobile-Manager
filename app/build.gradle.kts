@@ -14,22 +14,32 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "app.revenge.manager"
+        applicationId = "org.esharq.mobile.manager"
         minSdk = 28
         targetSdk = 34
         versionName = version.toString()
         versionCode = versionName!!.removePrefix("v").split("-").first().replace(".", "").toInt()
 
 
-        buildConfigField("String", "MOD_NAME", "\"Revenge\"")
-        buildConfigField("String", "MANAGER_NAME", "\"RevengeManager\"")
-        buildConfigField("String", "REPO", "\"revenge-mod/bundle\"")
-        buildConfigField("String", "ORG_LINK", "\"https://github.com/revenge-mod\"")
-        buildConfigField("String", "INVITE_LINK", "\"https://discord.gg/ddcQf3s2Uq\"")
-        buildConfigField("String", "MODDED_APP_PACKAGE_NAME", "\"app.revenge\"")
-        buildConfigField("int", "MODDED_APP_ICON", "0xFEB23A42")
-        buildConfigField("int", "MODDED_APP_ICON_ALPHA", "0xFFFBB33C")
-        buildConfigField("int", "MODDED_APP_ICON_OTHER", "0xFFD3575E")
+        buildConfigField("String", "MOD_NAME", "\"Esharq\"")
+        buildConfigField("String", "MANAGER_NAME", "\"EsharqMobile\"")
+        buildConfigField("String", "REPO", "\"LOSTSTR/Esharq-Mobile\"")
+        buildConfigField("String", "ORG_LINK", "\"https://esharq.org\"")
+        buildConfigField("String", "INVITE_LINK", "\"https://discord.gg/QamdqDNEDa\"")
+        buildConfigField("String", "MODDED_APP_PACKAGE_NAME", "\"org.esharq.mobile\"")
+        // Where the Esharq loader is published. The installer embeds this module into Discord, and
+        // it is the piece that knows how to authenticate — upstream's would ignore the receipt and
+        // carry the bundled copy of the mod this fork exists to remove.
+        buildConfigField(
+            "String",
+            "LOADER_URL",
+            "\"https://github.com/LOSTSTR/Esharq-Mobile-Loader/releases/latest/download/app-release.apk\""
+        )
+        // Esharq gold, the same value the site and the badge embeds use, so the patched icon on the
+        // home screen matches everything else that carries the name.
+        buildConfigField("int", "MODDED_APP_ICON", "0xFFE3C25A")
+        buildConfigField("int", "MODDED_APP_ICON_ALPHA", "0xFFF0D98A")
+        buildConfigField("int", "MODDED_APP_ICON_OTHER", "0xFFB8912F")
 
         buildConfigField("String", "GIT_BRANCH", "\"${getCurrentBranch()}\"")
         buildConfigField("String", "GIT_COMMIT", "\"${getLatestCommit()}\"")

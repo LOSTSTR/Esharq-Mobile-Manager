@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Arabic for Esharq Mobile. Android picks this automatically on an Arabic device and falls back
+    to values/ for anything not translated here, so a missing line degrades to English rather than
+    to a crash.
+
+    Product names stay in Latin script on purpose: Discord, Shizuku, Android and Esharq's own
+    English name are what users search for and what error messages elsewhere will say.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+
+    <string name="esharq_signed_in">تم تسجيل الدخول. ستُبنى هذه النسخة لحسابك.</string>
+    <string name="esharq_not_member">إشراق للجوال لأعضاء خادم إشراق فقط. انضم للخادم ثم سجّل الدخول من جديد.</string>
+    <string name="esharq_sign_in_failed">لم يكتمل تسجيل الدخول. حاول مرة أخرى.</string>
+    <string name="esharq_sign_in">سجّل الدخول بحساب ديسكورد</string>
+    <string name="esharq_sign_in_required">إشراق للجوال يعمل لأعضاء خادم إشراق فقط. سجّل الدخول لتُبنى النسخة لحسابك.</string>
+
+    <string name="msg_cleared_cache">تم مسح الذاكرة المؤقتة</string>
+    <string name="msg_load_fail">تعذّر تحميل التحديثات</string>
+    <string name="msg_coming_soon">قريباً</string>
+    <string name="msg_invalid_version">إصدار ديسكورد غير صالح</string>
+    <string name="msg_loading">جارٍ التحميل…</string>
+    <string name="msg_downgrade">تنزيل إصدار أقدم</string>
+    <string name="msg_downgrade_disallowed">لا يمكن الرجوع لإصدار أقدم، جرّب إزالة التطبيق أولاً</string>
+    <string name="msg_permission_grant">يحتاج التطبيق إذن الملفات لاستخدام التخزين المشترك.</string>
+    <string name="msg_shizuku_denied">تعذّر الحصول على صلاحيات Shizuku</string>
+    <string name="msg_try_again">هل تريد المحاولة مرة أخرى؟</string>
+    <string name="msg_invalid_apk">ملف APK تالف، امسح الذاكرة المؤقتة ثم أعد التثبيت</string>
+    <string name="msg_download_cancelled">أُلغي التنزيل</string>
+    <string name="msg_download_failed">فشل التنزيل</string>
+    <string name="msg_download_verify_failed">تعذّر التحقّق من الملف المنزّل، راجع السجلّ للتفاصيل</string>
+    <string name="msg_copied">نُسخ إلى الحافظة</string>
+    <string name="msg_back_warning">الخروج قبل انتهاء التثبيت قد يُتلف الملفات المنزّلة. أمتأكّد؟</string>
+
+    <string name="group_download">تنزيل الملفات</string>
+    <string name="group_patch">الترقيع</string>
+    <string name="group_installing">التثبيت</string>
+
+    <string name="step_dl_base">تنزيل الملف الأساسي</string>
+    <string name="step_dl_lib">تنزيل المكتبات</string>
+    <string name="step_dl_lang">تنزيل ملفات اللغات</string>
+    <string name="step_dl_res">تنزيل الموارد</string>
+    <string name="step_dl_mod">تنزيل إشراق</string>
+    <string name="step_change_icon">تغيير أيقونة التطبيق</string>
+    <string name="step_patch_manifests">ترقيع ملفات التطبيق</string>
+    <string name="step_write_install_token">ربط هذه النسخة بحسابك</string>
+    <string name="step_add_mod">حقن إشراق</string>
+    <string name="step_signing">توقيع الملفات</string>
+    <string name="step_installing">تثبيت الملفات</string>
+
+    <string name="installer_success">تم التثبيت بنجاح</string>
+    <string name="installer_aborted">أُلغي التثبيت</string>
+    <string name="installer_cached">مخزّن</string>
+
+    <string name="install_fail_generic">فشل التثبيت: سبب غير معروف</string>
+    <string name="install_fail_blocked">حُظر التثبيت</string>
+    <string name="install_fail_invalid">ملف أو أكثر غير صالح أو تالف</string>
+    <string name="install_fail_conflict">تعارض مع تطبيق مثبّت، غالباً بسبب اختلاف التوقيع</string>
+    <string name="install_fail_storage">لا توجد مساحة تخزين كافية</string>
+    <string name="install_fail_incompatible">التطبيق غير متوافق مع هذا الجهاز</string>
+    <string name="install_fail_timeout">انتهت مهلة التثبيت</string>
+
+    <string name="status_ongoing">جارٍ</string>
+    <string name="status_successful">تم</string>
+    <string name="status_fail">فشل</string>
+    <string name="status_queued">في الانتظار</string>
+
+    <string name="action_collapse">طيّ</string>
+    <string name="action_expand">توسيع</string>
+    <string name="action_back">رجوع</string>
+    <string name="action_copy_logs">نسخ السجلّ</string>
+    <string name="action_clear_cache">مسح الذاكرة المؤقتة</string>
+    <string name="action_confirm">تأكيد</string>
+    <string name="action_start_update">ابدأ التحديث</string>
+    <string name="action_install">تثبيت</string>
+    <string name="action_update">تحديث</string>
+    <string name="action_reinstall">إعادة تثبيت</string>
+    <string name="action_launch">فتح</string>
+    <string name="action_uninstall">إزالة</string>
+    <string name="action_info">معلومات</string>
+    <string name="action_retry">إعادة المحاولة</string>
+    <string name="action_reload">إعادة التحميل</string>
+    <string name="action_open_about">عن التطبيق</string>
+    <string name="action_open_settings">الإعدادات</string>
+    <string name="action_tap_to_install">اضغط لتثبيت إشراق على ديسكورد %1$s</string>
+    <string name="action_confirm_exit">اخرج على أي حال</string>
+    <string name="action_dismiss_nevermind">تراجع</string>
+    <string name="action_dismiss_no_thanks">لا شكراً</string>
+    <string name="action_try_again">حاول مرة أخرى</string>
+    <string name="action_view_logs">عرض السجلّ</string>
+    <string name="action_show_timestamp">إظهار الوقت</string>
+    <string name="action_copy_log">نسخ السطر</string>
+    <string name="action_save_logs">حفظ السجلّ في ملف</string>
+    <string name="action_share_logs">مشاركة السجلّ</string>
+    <string name="action_more_options">خيارات أخرى</string>
+
+    <string name="title_installer">المثبّت</string>
+    <string name="title_home">الرئيسية</string>
+    <string name="title_settings">الإعدادات</string>
+    <string name="title_update">يتوفّر تحديث!</string>
+    <string name="title_about">عن التطبيق</string>
+    <string name="title_permission_grant">منح الصلاحيات</string>
+    <string name="title_update_available">يتوفّر تحديث جديد لديسكورد!</string>
+    <string name="title_warning">تنبيه</string>
+    <string name="title_dl_failed">فشل التنزيل</string>
+    <string name="title_logs">السجلّ</string>
+    <string name="title_os_libraries">المكتبات مفتوحة المصدر</string>
+    <string name="title_libraries">المكتبات</string>
+
+    <string name="theme_system">حسب النظام</string>
+    <string name="theme_light">فاتح</string>
+    <string name="theme_dark">داكن</string>
+
+    <string name="duration_disabled">معطّل</string>
+    <string name="duration_fifteen_min">كل ربع ساعة</string>
+    <string name="duration_half_hour">كل نصف ساعة</string>
+    <string name="duration_hourly">كل ساعة</string>
+    <string name="duration_bihourly">كل ساعتين</string>
+    <string name="duration_twice_daily">مرتين يومياً</string>
+    <string name="duration_daily">يومياً</string>
+    <string name="duration_weekly">أسبوعياً</string>
+
+    <string name="settings_appearance">المظهر</string>
+    <string name="settings_appearance_description">غيّر شكل التطبيق وإحساسه</string>
+    <string name="settings_dynamic_color">ألوان ديناميكية</string>
+    <string name="settings_dynamic_color_description">متاح على أندرويد 12 فما فوق فقط</string>
+    <string name="settings_theme">السمة</string>
+    <string name="settings_check_updates">تحقّق من تحديثات ديسكورد</string>
+    <string name="settings_customization">التخصيص</string>
+    <string name="settings_app_name">اسم التطبيق</string>
+</resources>
