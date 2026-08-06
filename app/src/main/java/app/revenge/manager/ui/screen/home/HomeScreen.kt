@@ -40,7 +40,9 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.revenge.manager.BuildConfig
 import app.revenge.manager.R
+import androidx.compose.ui.platform.LocalContext
 import app.revenge.manager.domain.manager.PreferenceManager
+import app.revenge.manager.esharq.EsharqAuth
 import app.revenge.manager.ui.components.SegmentedButton
 import app.revenge.manager.ui.screen.installer.InstallerScreen
 import app.revenge.manager.ui.screen.settings.SettingsScreen
@@ -66,6 +68,8 @@ class HomeScreen : Screen {
         val navigator = LocalNavigator.currentOrThrow
         val prefs: PreferenceManager = get()
         val viewModel: HomeViewModel = getScreenModel()
+        val esharqAuth: EsharqAuth = get()
+        val context = LocalContext.current
 
         val currentVersion = remember {
             DiscordVersion.fromVersionCode(viewModel.installManager.current?.versionCode.toString())
@@ -155,11 +159,32 @@ class HomeScreen : Screen {
                     }
                 }
 
+                // Membership is proved once, here, before anything is downloaded or patched.
+                // Putting it ahead of the install is the difference between finding out now and
+                // finding out after twenty minutes of patching.
+                val signedIn = esharqAuth.installToken != null
+                if (!signedIn) {
+                    Text(
+                        text = stringResource(R.string.esharq_sign_in_required),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = LocalContentColor.current.copy(alpha = 0.7f),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Button(
+                        onClick = { context.startActivity(esharqAuth.signInIntent()) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = stringResource(R.string.esharq_sign_in), maxLines = 1)
+                    }
+                }
+
                 Button(
                     onClick = {
                         navigator.navigate(InstallerScreen(latestVersion!!))
                     },
-                    enabled = latestVersion != null && (prefs.allowDowngrade || latestVersion >= (currentVersion ?: Constants.DUMMY_VERSION)),
+                    enabled = signedIn && latestVersion != null && (prefs.allowDowngrade || latestVersion >= (currentVersion ?: Constants.DUMMY_VERSION)),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     val label = when {

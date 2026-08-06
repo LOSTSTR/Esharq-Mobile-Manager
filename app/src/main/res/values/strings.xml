@@ -36,6 +36,13 @@
 
     <string name="step_change_icon">Changing app icon</string>
     <string name="step_patch_manifests">Patching app manifests</string>
+    <string name="step_write_install_token">Signing this build to your account</string>
+
+    <string name="esharq_signed_in">Signed in. This build will be made for your account.</string>
+    <string name="esharq_not_member">Esharq Mobile is for members of the Esharq server. Join, then sign in again.</string>
+    <string name="esharq_sign_in_failed">Sign-in did not complete. Try again.</string>
+    <string name="esharq_sign_in">Sign in with Discord</string>
+    <string name="esharq_sign_in_required">Esharq Mobile works for members of the Esharq server only. Sign in so this build can be made for your account.</string>
     <string name="step_add_mod">Injecting Revenge</string>
 
     <string name="step_signing">Signing APKs</string>

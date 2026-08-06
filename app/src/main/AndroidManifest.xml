@@ -54,6 +54,16 @@
                 <action android:name="app.revenge.actions.INSTALL"/>
                 <category android:name="android.intent.category.OPENABLE"/>
             </intent-filter>
+            <!-- Where esharq.org hands the receipt back after Discord has confirmed the account is
+                 in the Esharq server. Handed back through the app's own scheme rather than shown
+                 on a page: a receipt printed in a browser is a receipt that ends up in a
+                 screenshot. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="esharq" android:host="mobile-auth"/>
+            </intent-filter>
         </activity>
 
         <service android:name=".installer.session.InstallService"/>

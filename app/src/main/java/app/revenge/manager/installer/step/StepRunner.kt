@@ -18,6 +18,7 @@ import app.revenge.manager.installer.step.installing.InstallStep
 import app.revenge.manager.installer.step.patching.AddModStep
 import app.revenge.manager.installer.step.patching.PatchManifestsStep
 import app.revenge.manager.installer.step.patching.PresignApksStep
+import app.revenge.manager.installer.step.patching.WriteInstallTokenStep
 import app.revenge.manager.installer.step.patching.ReplaceIconStep
 import app.revenge.manager.installer.util.LogEntry
 import app.revenge.manager.installer.util.Logger
@@ -125,6 +126,8 @@ class StepRunner(
         // Patching
         if (preferenceManager.patchIcon) add(ReplaceIconStep())
         add(PatchManifestsStep())
+        // Before signing, so the receipt is covered by the signature like everything else.
+        add(WriteInstallTokenStep())
         add(PresignApksStep(signedDir))
         add(AddModStep(signedDir, lspatchedDir))
 
