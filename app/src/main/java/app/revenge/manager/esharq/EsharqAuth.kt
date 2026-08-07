@@ -3,6 +3,9 @@ package app.revenge.manager.esharq
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.content.edit
 import java.security.SecureRandom
 import android.util.Base64
@@ -22,10 +25,16 @@ class EsharqAuth(context: Context) {
 
     private val prefs = context.getSharedPreferences("esharq", Context.MODE_PRIVATE)
 
-    /** The receipt, once earned. Baked into the APK the installer builds. */
-    var installToken: String?
-        get() = prefs.getString(KEY_TOKEN, null)?.takeIf { it.isNotBlank() }
-        private set(value) = prefs.edit { if (value == null) remove(KEY_TOKEN) else putString(KEY_TOKEN, value) }
+    /**
+     * Compose state, not just a preference read.
+     *
+     * The home screen decides whether Install is enabled from this. Reading the preference alone
+     * left the screen showing "sign in" after a successful sign-in — the value had changed but
+     * nothing told Compose to draw again, so the user came back from Discord to a button that still
+     * refused them until they closed and reopened the app.
+     */
+    var installToken: String? by mutableStateOf(prefs.getString(KEY_TOKEN, null)?.takeIf { it.isNotBlank() })
+        private set
 
     /**
      * Stable per-install identifier. Not a secret and not an identity — it ties the receipt to this
@@ -83,13 +92,19 @@ class EsharqAuth(context: Context) {
         val token = uri.getQueryParameter("token")?.takeIf { it.isNotBlank() }
             ?: return Result.Failed("no_token")
 
-        installToken = token
+        persist(token)
         return Result.Success(token)
     }
 
     /** Forgets the receipt. Used when the user signs out or wants to install for another account. */
     fun signOut() {
-        installToken = null
+        persist(null)
+    }
+
+    /** Keeps the stored value and the drawn value in step; they are two things now. */
+    private fun persist(token: String?) {
+        installToken = token
+        prefs.edit { if (token == null) remove(KEY_TOKEN) else putString(KEY_TOKEN, token) }
     }
 
     fun signInIntent(): Intent = Intent(Intent.ACTION_VIEW, beginSignIn())
