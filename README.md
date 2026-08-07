@@ -1,80 +1,49 @@
-<p align="center">
-  <picture>
-    <source
-      width="512px"
-      media="(prefers-color-scheme: dark)"
-      srcset="assets/wordmark/wordmark+slogan-dark.svg"
-    >
-    <img
-      width="512px"
-      src="assets/wordmark/wordmark+slogan-light.svg"
-    >
-  </picture>
-  <br>
-  <a href="https://revenge-mod.github.io/">
-       <picture>
-           <source height="32px" media="(prefers-color-scheme: dark)" srcset="assets/logo/logo-dark.svg" />
-           <img height="32px" src="assets/logo/logo-light.svg" />
-       </picture>
-   </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-   <a href="https://discord.com/invite/ddcQf3s2Uq">
-       <picture>
-           <source height="32px" media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/13122796/178032563-d4e084b7-244e-4358-af50-26bde6dd4996.png" />
-           <img height="32px" src="https://user-images.githubusercontent.com/13122796/178032563-d4e084b7-244e-4358-af50-26bde6dd4996.png" />
-       </picture>
-   </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-   <a href="https://github.com/revenge-mod">
-       <picture>
-           <source height="32px" media="(prefers-color-scheme: dark)" srcset="https://i.ibb.co/dMMmCrW/Git-Hub-Mark.png" />
-           <img height="32px" src="https://i.ibb.co/9wV3HGF/Git-Hub-Mark-Light.png" />
-       </picture>
-   </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<h1 align="center">إشراق للجوال — المُثبِّت</h1>
 
-   </a>
+<p align="center">
+  <a href="https://esharq.org">esharq.org</a> ·
+  <a href="https://discord.gg/QamdqDNEDa">خادم إشراق</a> ·
+  <a href="https://github.com/LOSTSTR/Esharq-Mobile-Loader">المُحمِّل</a>
 </p>
 
-# 💊 Revenge Manager
+تطبيق أندرويد يُرقّع ديسكورد على جهازك ليعمل بداخله **إشراق** — بواجهة عربية وإضافات وشارات.
+لا يحتاج روت.
 
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/revenge-mod/revenge-manager/release.yml)
-![Open Software License 3](https://img.shields.io/badge/License-OSL%20v3-yellow.svg)
+## يعمل لأعضاء خادم إشراق فقط
 
-Application to use Revenge on Android.
+هذا ليس فحصاً داخل التطبيق يمكن تعطيله. المُثبِّت يسألك تسجيل الدخول بديسكورد أولاً، ويسأل
+خادم إشراق إن كنت عضواً، ولا يبني النسخة إلا بعد ذلك. ومن ليس عضواً **لا تصله الحزمة أصلاً**،
+فلا يجد على جهازه كوداً يعدّله ليتجاوز الشرط.
 
-## ❓ About
+النسخة تُبنى لحسابك وحدك: لو أعطيتها لغيرك أوقف إشراق نفسه فور تسجيل دخوله وترك له ديسكورد سليماً.
+وإن غادرت الخادم، يتوقّف إشراق عند أول تشغيل بعدها — **ويبقى ديسكورد يعمل عادياً بلا تعديل**.
 
-Revenge Manager is an application that installs and updates [Revenge](https://github.com/revenge-mod/revenge-bundle),
-a modification for Discord.
+## التثبيت
 
-## 💪 Features
+1. نزّل `esharq-mobile-manager.apk` من [صفحة الإصدارات](https://github.com/LOSTSTR/Esharq-Mobile-Manager/releases/latest) واسمح بالتثبيت من مصدر غير معروف.
+2. افتح التطبيق ← **سجّل الدخول بحساب ديسكورد**. الصلاحية المطلوبة هي التعريف بهويتك فقط — لا كلمة مرور ولا رمز حساب.
+3. اضغط **تثبيت** ودعه يُكمل: يُنزّل ديسكورد ويرقّعه ويثبّته.
+4. افتح ديسكورد الجديد.
 
-Some of the features Revenge Manager provides are:
+الشرح الكامل على [esharq.org/guide](https://esharq.org/guide#mobile).
 
-- 📲 **Install**: Download Discord and install Revenge on it
-- 🔁 **Update**: Update Revenge to the latest version
-- 🔔 **Notifications**: Be notified when a new version of Revenge is available
-- 📃 **Changelog**: See the changelog of Revenge
+## البناء من المصدر
 
-## 🔽 Download
+```
+./gradlew assembleDebug
+```
 
-You can download the most recent version of Revenge Manager from
-[here](https://github.com/revenge-mod/revenge-manager/releases/latest).  
-Learn how to use Revenge Manager by following the [documentation](/docs).
+يحتاج JDK 17 و Android SDK 34. نسخة الإصدار تحتاج مفتاح توقيع في `app/keystore.jks` مع
+`KEYSTORE_PASSWORD` و `KEYSTORE_ENTRY_ALIAS` و `KEYSTORE_ENTRY_PASSWORD` في البيئة؛ وبدونه يوقّع
+البناء بمفتاح التصحيح.
 
-## 📚 Everything else
+## المصدر
 
-### 📙 Contributing
+اشتقاق من [revenge-manager](https://github.com/revenge-mod/revenge-manager) برخصة OSL-3.0،
+وتخضع هذه النسخة لنفس الرخصة. الشكر لفريقه على الأساس.
 
-Thank you for considering contributing to Revenge Manager.
-You can find the contribution guidelines [here](CONTRIBUTING.md).
+«إشراق / Esharq» وشعاراته وشاراته علامات محفوظة لصاحبها، ولا تشملها الرخصة.
 
-### 🛠️ Building
+## تنبيه
 
-To build a Revenge Manager, you can follow the [documentation](/docs).
-
-### 📃 Documentation
-
-You can find the documentation of Revenge Manager [here](/docs).
-
-## 📜 Licence
-
-Revenge Manager is licensed under the OSLv3 license. Please see the [license file](LICENSE) for more information.
+تعديل ديسكورد يخالف شروط خدمته. الاستخدام على مسؤوليتك.
