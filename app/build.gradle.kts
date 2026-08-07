@@ -23,7 +23,12 @@ android {
 
         buildConfigField("String", "MOD_NAME", "\"Esharq\"")
         buildConfigField("String", "MANAGER_NAME", "\"EsharqMobile\"")
-        buildConfigField("String", "REPO", "\"LOSTSTR/Esharq-Mobile\"")
+        // The commit feed on the home screen reads this over the public GitHub API with no token.
+        // Pointing it at the bundle repo put a "Failed to load commits" box on the first screen
+        // every user sees, because that repo is private and the API answers 404 — the bundle is
+        // served to members, not published, and that is deliberate. The installer's own repo is
+        // public, and its changes are the ones a user would act on by reinstalling.
+        buildConfigField("String", "REPO", "\"LOSTSTR/Esharq-Mobile-Manager\"")
         buildConfigField("String", "ORG_LINK", "\"https://esharq.org\"")
         buildConfigField("String", "INVITE_LINK", "\"https://discord.gg/QamdqDNEDa\"")
         buildConfigField("String", "MODDED_APP_PACKAGE_NAME", "\"org.esharq.mobile\"")
