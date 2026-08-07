@@ -77,9 +77,12 @@ jobs:
             # is not something to discover from a user's report, so it is checked here — against
             # the APK actually published last time, not against an assumption about the secret.
             - name: Refuse to publish a build signed by a different key
+              shell: bash
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
+                  set -euo pipefail
+
                   previous=$(gh release list --limit 1 --json tagName -q '.[0].tagName' || true)
                   if [ -z "$previous" ]; then
                       echo "No previous release to compare against; nothing to break."
@@ -88,6 +91,7 @@ jobs:
 
                   gh release download "$previous" -p esharq-mobile-manager.apk -O previous.apk
                   apksigner=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | tail -1)
+                  test -x "$apksigner"
                   fingerprint() {
                       "$apksigner" verify --print-certs "$1" \
                           | sed -n 's/^Signer #1 certificate SHA-256 digest: //p'
@@ -97,6 +101,14 @@ jobs:
                   after=$(fingerprint dist/esharq-mobile-manager.apk)
                   echo "$previous: $before"
                   echo "new:       $after"
+
+                  # Two empty strings compare equal. The first version of this check read no
+                  # certificate at all and announced that the keys matched — a guard that passes
+                  # when it cannot see is worse than no guard, because it is believed.
+                  if [ -z "$before" ] || [ -z "$after" ]; then
+                      echo "Read no certificate from one of the APKs, so nothing was compared." >&2
+                      exit 1
+                  fi
 
                   if [ "$before" != "$after" ]; then
                       echo "The signing key changed since $previous. Publishing this would lock" >&2
