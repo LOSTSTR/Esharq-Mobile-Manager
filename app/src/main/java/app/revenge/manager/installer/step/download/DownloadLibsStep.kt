@@ -24,6 +24,7 @@ class DownloadLibsStep(
     override val nameRes = R.string.step_dl_lib
 
     override val downloadMirrorUrlPath: String = "/tracker/download/$version/config.$arch"
+    override val mustBeSignedByDiscord = true
     override val destination = dir.resolve("config.$arch-$version.apk")
     override val workingCopy = workingDir.resolve("config.$arch-$version.apk")
 

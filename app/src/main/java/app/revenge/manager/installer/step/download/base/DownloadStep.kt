@@ -10,6 +10,7 @@ import app.revenge.manager.domain.manager.DownloadManager
 import app.revenge.manager.domain.manager.DownloadResult
 import app.revenge.manager.domain.manager.Mirror
 import app.revenge.manager.domain.manager.PreferenceManager
+import app.revenge.manager.esharq.DiscordSignature
 import app.revenge.manager.installer.step.Step
 import app.revenge.manager.installer.step.StepGroup
 import app.revenge.manager.installer.step.StepRunner
@@ -99,6 +100,14 @@ abstract class DownloadStep : Step() {
     }
 
     /**
+     * Whether this file has to carry Discord's own signature.
+     *
+     * True for the Discord splits, which come from community mirrors rather than from Discord.
+     * False for anything published by this project, which is signed with our key instead.
+     */
+    open val mustBeSignedByDiscord: Boolean = false
+
+    /**
      * Verifies that a file was properly downloaded
      */
     open suspend fun verify() {
@@ -107,6 +116,16 @@ abstract class DownloadStep : Step() {
 
         if (destination.length() <= 0)
             error("Downloaded file is empty: ${destination.absolutePath}")
+
+        if (!mustBeSignedByDiscord) return
+
+        when (val result = DiscordSignature.check(destination)) {
+            is DiscordSignature.Result.Genuine -> Unit
+            is DiscordSignature.Result.WrongSigner ->
+                error("${destination.name} is signed by ${result.found.joinToString()}, not by Discord")
+            is DiscordSignature.Result.Unverifiable ->
+                error("${destination.name} could not be verified as Discord's: ${result.reason}")
+        }
     }
 
     override suspend fun run(runner: StepRunner) {
@@ -115,17 +134,31 @@ abstract class DownloadStep : Step() {
         if (destination.exists()) {
             runner.logger.i("Checking if $fileName isn't empty")
             if (destination.length() > 0) {
-                runner.logger.i("$fileName is cached")
-                cached = true
+                // The cached copy used to be trusted on sight, so a file that arrived from a bad
+                // mirror once was reused forever without ever being looked at again. It is checked
+                // on the way out of the cache as well, and a copy that fails is thrown away and
+                // downloaded again rather than failing the install outright — a half-written file
+                // is the ordinary reason for this, not an attack.
+                val trustworthy = runCatching { verify() }
+                    .onFailure { runner.logger.i("Cached $fileName rejected: ${it.message}") }
+                    .isSuccess
 
-                runner.logger.i("Moving $fileName to working directory")
-                destination.copyTo(workingCopy, true)
+                if (trustworthy) {
+                    runner.logger.i("$fileName is cached")
+                    cached = true
 
-                status = StepStatus.SUCCESSFUL
-                return
+                    runner.logger.i("Moving $fileName to working directory")
+                    destination.copyTo(workingCopy, true)
+
+                    status = StepStatus.SUCCESSFUL
+                    return
+                }
+
+                runner.logger.i("Discarding the cached $fileName and downloading it again")
+            } else {
+                runner.logger.i("Deleting empty file: $fileName")
             }
 
-            runner.logger.i("Deleting empty file: $fileName")
             destination.delete()
         }
 

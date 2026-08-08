@@ -18,6 +18,7 @@ class DownloadLangStep(
     override val nameRes = R.string.step_dl_lang
 
     override val downloadMirrorUrlPath: String = "/tracker/download/$version/config.en"
+    override val mustBeSignedByDiscord = true
     override val destination = dir.resolve("config.en-$version.apk")
     override val workingCopy = workingDir.resolve("config.en-$version.apk")
 

@@ -18,6 +18,7 @@ class DownloadResourcesStep(
     override val nameRes = R.string.step_dl_res
 
     override val downloadMirrorUrlPath: String = "/tracker/download/$version/config.xxhdpi"
+    override val mustBeSignedByDiscord = true
     override val destination = dir.resolve("config.xxhdpi-$version.apk")
     override val workingCopy = workingDir.resolve("config.xxhdpi-$version.apk")
 

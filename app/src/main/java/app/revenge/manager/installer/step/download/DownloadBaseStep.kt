@@ -18,6 +18,7 @@ class DownloadBaseStep(
     override val nameRes = R.string.step_dl_base
 
     override val downloadMirrorUrlPath: String = "/tracker/download/$version/base"
+    override val mustBeSignedByDiscord = true
     override val destination = dir.resolve("base-$version.apk")
     override val workingCopy = workingDir.resolve("base-$version.apk")
 
