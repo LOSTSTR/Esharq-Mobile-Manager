@@ -225,15 +225,34 @@ object ManifestPatcher {
     ) : NodeVisitor(nv) {
         override fun attr(ns: String?, name: String, resourceId: Int, type: Int, value: Any?) {
             val replace = attrs.containsKey(name)
-            val newValue = attrs[name]
+            val chosen = if (replace) attrs[name] else value
 
-            super.attr(
-                ns,
-                name,
-                resourceId,
-                if (newValue is String) TYPE_STRING else type,
-                if (replace) newValue else value
-            )
+            super.attr(ns, name, resourceId, axmlType(chosen, type), axmlValue(chosen))
         }
+    }
+
+    /**
+     * A binary manifest stores a boolean as an integer, so a Kotlin Boolean handed to the writer is
+     * not the value it looks like.
+     *
+     * This is why "Debuggable" did nothing. Discord's manifest already declares
+     * android:debuggable="false", so the attribute was replaced rather than added — and replacing it
+     * wrote a Boolean where an Int belonged, which came out of the writer as false again. The
+     * setting was on, the patch ran, and the installed app was not debuggable. Nothing failed
+     * anywhere; the switch simply had no effect, which is the hardest kind of bug to notice.
+     *
+     * The same silence applied to usesCleartextTraffic and requestLegacyExternalStorage whenever the
+     * manifest being patched already carried them.
+     */
+    internal fun axmlValue(value: Any?): Any? = when (value) {
+        is Boolean -> if (value) 1 else 0
+        else -> value
+    }
+
+    /** Strings and booleans carry their own type; anything else keeps the type it arrived with. */
+    internal fun axmlType(value: Any?, fallback: Int): Int = when (value) {
+        is String -> NodeVisitor.TYPE_STRING
+        is Boolean -> NodeVisitor.TYPE_INT_BOOLEAN
+        else -> fallback
     }
 }
