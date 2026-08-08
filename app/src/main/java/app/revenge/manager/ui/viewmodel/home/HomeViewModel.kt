@@ -20,6 +20,7 @@ import app.revenge.manager.domain.manager.InstallManager
 import app.revenge.manager.domain.manager.InstallMethod
 import app.revenge.manager.domain.manager.PreferenceManager
 import app.revenge.manager.domain.repository.RestRepository
+import app.revenge.manager.esharq.Version
 import app.revenge.manager.installer.Installer
 import app.revenge.manager.installer.session.SessionInstaller
 import app.revenge.manager.installer.shizuku.ShizukuInstaller
@@ -113,14 +114,20 @@ class HomeViewModel(
         }
     }
 
+    // Both repositories here were upstream's, left behind when this fork was branded. The update
+    // prompt therefore offered Revenge Manager — a different application — and installing it left
+    // the user with two installers side by side and, through it, a second modded Discord. The
+    // module check was keyed to upstream's release tags too, so this fork's own loader releases
+    // never invalidated the cached copy.
     private fun checkForUpdate() {
         screenModelScope.launch {
-            release = repo.getLatestRelease("revenge-mod/revenge-manager").dataOrNull
+            release = repo.getLatestRelease(BuildConfig.REPO).dataOrNull
             release?.let {
                 updateDownloadUrl = it.assets.firstOrNull { asset -> asset.name.endsWith(".apk") }?.browserDownloadUrl
-                showUpdateDialog = it.tagName.removePrefix("v") != BuildConfig.VERSION_NAME
+                showUpdateDialog = updateDownloadUrl != null &&
+                    Version.isNewer(it.tagName, BuildConfig.VERSION_NAME)
             }
-            repo.getLatestRelease("revenge-mod/revenge-xposed").ifSuccessful {
+            repo.getLatestRelease(BuildConfig.LOADER_REPO).ifSuccessful {
                 if (prefs.moduleVersion != it.tagName) {
                     prefs.moduleVersion = it.tagName
                     val module = File(cacheDir, "xposed.apk")

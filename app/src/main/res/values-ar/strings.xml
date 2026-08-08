@@ -128,4 +128,67 @@
     <string name="settings_check_updates">تحقّق من تحديثات ديسكورد</string>
     <string name="settings_customization">التخصيص</string>
     <string name="settings_app_name">اسم التطبيق</string>
+
+    <!-- الشاشة الأولى: أرقام النسخ وحوار التحديث. غيابها كان يترك «Current» و«Latest» ونصّ
+         التحديث بالإنجليزية داخل واجهة عربية بالكامل. -->
+    <string name="version_current">الحالية: %1$s</string>
+    <string name="version_latest">الأحدث: %1$s</string>
+    <string name="version_target">المطلوبة: %1$s</string>
+    <string name="update_description">يتوفّر إصدار %1$s من إشراق للجوال</string>
+
+    <!-- قنوات ديسكورد: تُترك بأسمائها لأنها أسماء قنوات لا أوصاف. -->
+    <string name="channel_stable" translatable="false">Stable</string>
+    <string name="channel_beta" translatable="false">Beta</string>
+    <string name="channel_alpha" translatable="false">Alpha</string>
+
+    <string name="battery_opt_title">تحسين البطارية</string>
+    <string name="battery_opt_description">إيقاف تحسين البطارية ضروري كي تستمرّ التنزيلات في الخلفية أو والشاشة مطفأة.</string>
+    <string name="battery_opt_confirm">اسمح</string>
+    <string name="battery_opt_dismiss">لاحقاً</string>
+    <string name="battery_opt_error">تعذّر فتح إعدادات تحسين البطارية.</string>
+
+    <string name="settings_advanced">متقدّم</string>
+    <string name="settings_advanced_description">تحكّم في التنزيل والتثبيت</string>
+    <string name="settings_channel">قناة الإصدار</string>
+    <string name="settings_version">نسخة ديسكورد</string>
+    <string name="settings_mirror">مرآة التنزيل</string>
+    <string name="install_method">طريقة التثبيت</string>
+    <string name="default_installer">مدير الحزم (مستحسن)</string>
+    <string name="shizuku_installer" translatable="false">Shizuku</string>
+    <string name="settings_allow_downgrade">اسمح بالتنزيل لنسخة أقدم</string>
+    <string name="settings_allow_downgrade_description">يتخطّى فحص إشراق للجوال، ويفيد إن كان جهازك يسمح بذلك أصلاً عبر الروت</string>
+    <string name="settings_auto_clear_cache">امسح الذاكرة المؤقتة تلقائياً</string>
+    <string name="settings_auto_clear_cache_description">تُمسح عند صدور تحديث لديسكورد</string>
+
+    <string name="settings_customization_description">خصّص تثبيت إشراق لديك</string>
+    <string name="settings_app_icon">استبدل أيقونة التطبيق</string>
+    <string name="settings_app_icon_description">تستعمل أيقونة إشراق بدل أيقونة ديسكورد</string>
+    <string name="settings_package_name">اسم الحزمة</string>
+
+    <string name="settings_developer">للمطوّرين فقط</string>
+    <string name="settings_developer_description">قد تُعطِب هذه الإعدادات أشياء إن أُسيء استعمالها</string>
+    <string name="settings_debuggable">قابل للتنقيح</string>
+    <string name="settings_debuggable_description">فعّل راية التنقيح</string>
+    <string name="settings_module_location">مسار الوحدة</string>
+    <string name="settings_module_location_description">لتطوير وحدة Xposed. كن حذراً</string>
+    <string name="settings_module_location_reset">أعِد مسار الوحدة</string>
+
+    <string name="settings_logs_line_wrap">لُفّ الأسطر</string>
+    <string name="settings_logs_alternate_lines">أسطر متناوبة</string>
+
+    <string name="label_team">الفريق</string>
+    <string name="label_special_thanks">شكر خاص</string>
+    <string name="label_translate">ترجمة</string>
+    <string name="label_github" translatable="false">GitHub</string>
+    <string name="label_discord" translatable="false">Discord</string>
+    <string name="cd_library_author">المؤلّف: %1$s</string>
+    <string name="cd_library_license">الرخصة: %1$s</string>
+
+    <string name="action_next_theme">السمة التالية</string>
+    <string name="action_previous_theme">السمة السابقة</string>
+
+    <string name="msg_seven_left">بقيت ٧ نقرات</string>
+    <string name="msg_five_left">بقيت ٥ نقرات</string>
+    <string name="msg_two_left">بقيت نقرتان</string>
+    <string name="msg_unlocked">صرتَ مطوّراً</string>
 </resources>

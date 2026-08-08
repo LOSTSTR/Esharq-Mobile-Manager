@@ -50,6 +50,13 @@ jobs:
                   echo "version=$version" >> "$GITHUB_OUTPUT"
                   echo "Releasing v$version"
 
+            # The rule deciding whether a release is newer than what is installed. Getting it wrong
+            # in one direction nags every user forever and offers them a downgrade; getting it wrong
+            # in the other silently stops offering real updates, which nobody reports because
+            # nothing appears to be broken.
+            - name: Run the logic tests
+              run: ./gradlew --no-daemon testDebugUnitTest
+
             # Signed with the same key every time. Android refuses an update signed by a different
             # one, so a release built without this would be uninstallable over the previous one.
             - name: Setup keystore

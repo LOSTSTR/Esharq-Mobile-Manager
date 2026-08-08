@@ -35,6 +35,7 @@ android {
         // Where the Esharq loader is published. The installer embeds this module into Discord, and
         // it is the piece that knows how to authenticate — upstream's would ignore the receipt and
         // carry the bundled copy of the mod this fork exists to remove.
+        buildConfigField("String", "LOADER_REPO", "\"LOSTSTR/Esharq-Mobile-Loader\"")
         buildConfigField(
             "String",
             "LOADER_URL",
@@ -138,6 +139,8 @@ android {
 }
 
 dependencies {
+    testImplementation(libs.kotlin.test)
+
     implementation(platform(libs.compose.bom))
 
     implementation(libs.bundles.accompanist)
