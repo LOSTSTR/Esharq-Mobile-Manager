@@ -111,11 +111,15 @@ jobs:
                           cat "$out" >&2
                           return 1
                       fi
-                      # apksigner labels the signer "Signer #1" in some versions and
-                      # "Signer (minSdkVersion=..., maxSdkVersion=...)" in others, so the label is
-                      # matched loosely and every certificate found is compared, not just the first.
-                      # "Source Stamp Signer" is Google Play's stamp, not ours, and does not match.
-                      sed -n 's/^Signer[^:]* certificate SHA-256 digest: //p' "$out" | sort -u | paste -sd,
+                      # The label in front of the digest is not stable across build-tools versions:
+                      # "Signer #1 certificate SHA-256 digest:" locally, "V2 Signer: certificate
+                      # SHA-256 digest:" on the runner, and "Signer (minSdkVersion=...)" elsewhere.
+                      # Matching the label is how this check came to read nothing at all, so the
+                      # digest line is found by what it says and the value is simply the last field.
+                      # Google Play's source stamp is a different certificate and is left out.
+                      grep 'certificate SHA-256 digest:' "$out" \
+                          | grep -v 'Source Stamp' \
+                          | awk '{print $NF}' | sort -u | paste -sd,
                   }
 
                   before=$(fingerprint previous.apk previous.txt)
