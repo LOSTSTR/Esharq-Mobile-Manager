@@ -99,13 +99,27 @@ jobs:
                   gh release download "$previous" -p esharq-mobile-manager.apk -O previous.apk
                   apksigner=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | tail -1)
                   test -x "$apksigner"
+
+                  # apksigner's own output is kept, not just the parsed line. When this step first
+                  # ran strictly it refused the release because both fingerprints came out empty,
+                  # and the log said nothing about why — the tool's answer had been thrown away by
+                  # the pipe. A check that can fail has to be able to explain itself.
                   fingerprint() {
-                      "$apksigner" verify --print-certs "$1" \
-                          | sed -n 's/^Signer #1 certificate SHA-256 digest: //p'
+                      local out="$2"
+                      if ! "$apksigner" verify --print-certs "$1" > "$out" 2>&1; then
+                          echo "apksigner could not read $1:" >&2
+                          cat "$out" >&2
+                          return 1
+                      fi
+                      # apksigner labels the signer "Signer #1" in some versions and
+                      # "Signer (minSdkVersion=..., maxSdkVersion=...)" in others, so the label is
+                      # matched loosely and every certificate found is compared, not just the first.
+                      # "Source Stamp Signer" is Google Play's stamp, not ours, and does not match.
+                      sed -n 's/^Signer[^:]* certificate SHA-256 digest: //p' "$out" | sort -u | paste -sd,
                   }
 
-                  before=$(fingerprint previous.apk)
-                  after=$(fingerprint dist/esharq-mobile-manager.apk)
+                  before=$(fingerprint previous.apk previous.txt)
+                  after=$(fingerprint dist/esharq-mobile-manager.apk new.txt)
                   echo "$previous: $before"
                   echo "new:       $after"
 
@@ -114,6 +128,8 @@ jobs:
                   # when it cannot see is worse than no guard, because it is believed.
                   if [ -z "$before" ] || [ -z "$after" ]; then
                       echo "Read no certificate from one of the APKs, so nothing was compared." >&2
+                      echo "--- apksigner on $previous ---" >&2; cat previous.txt >&2
+                      echo "--- apksigner on the new build ---" >&2; cat new.txt >&2
                       exit 1
                   fi
 
