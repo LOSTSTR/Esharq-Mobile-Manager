@@ -184,4 +184,7 @@
     <string name="install_method">Install method</string>
     <string name="default_installer">PackageManager (recommended)</string>
     <string name="shizuku_installer">Shizuku</string>
+    <string name="action_copy_report">Copy report</string>
+    <string name="msg_report_copied">Report copied — paste it in the server</string>
+    <string name="msg_report_copy_failed">Could not copy the report</string>
 </resources>

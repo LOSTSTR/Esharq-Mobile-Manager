@@ -1,5 +1,7 @@
 package app.revenge.manager.ui.viewmodel.installer
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.getValue
@@ -12,6 +14,7 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import app.revenge.manager.R
 import app.revenge.manager.domain.manager.InstallManager
+import app.revenge.manager.esharq.ProblemReport
 import app.revenge.manager.installer.step.Step
 import app.revenge.manager.installer.step.StepGroup
 import app.revenge.manager.installer.step.StepRunner
@@ -33,6 +36,9 @@ class InstallerViewModel(
 ) : ScreenModel {
 
     val runner = StepRunner(discordVersion)
+
+    /** Kept because the constructor parameter is not a field, and the report names it. */
+    private val discordVersionName = discordVersion.toString()
 
     val groupedSteps: ImmutableMap<StepGroup, List<Step>> = StepGroup.entries
         .associateWith { group ->
@@ -118,6 +124,22 @@ class InstallerViewModel(
         }
 
         return tmpFile
+    }
+
+    /**
+     * Puts a short report on the clipboard, ready to paste into a message.
+     *
+     * Sharing a file is the wrong shape for how people ask for help: they describe the problem in
+     * the server and are asked for details, and a file has to be saved, found and attached. Most
+     * write "it does not work" instead, and then nobody can help. This is one paste.
+     */
+    fun copyReport(activityContext: Context): Boolean {
+        val report = ProblemReport.build(runner.steps, runner.logger.logs, discordVersionName)
+        val clipboard = activityContext.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+            ?: return false
+
+        clipboard.setPrimaryClip(ClipData.newPlainText("Esharq install report", report))
+        return true
     }
 
     fun shareLogs(activityContext: Context) {

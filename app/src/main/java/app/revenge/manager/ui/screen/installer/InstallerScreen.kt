@@ -38,6 +38,7 @@ import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import app.revenge.manager.R
+import app.revenge.manager.utils.showToast
 import app.revenge.manager.domain.manager.PreferenceManager
 import app.revenge.manager.installer.step.StepStatus
 import app.revenge.manager.ui.viewmodel.installer.InstallerViewModel
@@ -164,6 +165,21 @@ class InstallerScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                     ) {
+                        // Copying comes first because it is what people are actually asked for:
+                        // paste the error into the server and somebody reads it. Sharing a file
+                        // stays for keeping a full copy.
+                        FilledTonalButton(
+                            onClick = {
+                                val copied = viewModel.copyReport(activity!!)
+                                activity.showToast(
+                                    if (copied) R.string.msg_report_copied else R.string.msg_report_copy_failed
+                                )
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(stringResource(R.string.action_copy_report))
+                        }
+
                         FilledTonalButton(
                             onClick = { viewModel.shareLogs(activity!!) },
                             modifier = Modifier.weight(1f)

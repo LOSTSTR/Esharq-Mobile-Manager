@@ -191,4 +191,7 @@
     <string name="msg_five_left">بقيت ٥ نقرات</string>
     <string name="msg_two_left">بقيت نقرتان</string>
     <string name="msg_unlocked">صرتَ مطوّراً</string>
+    <string name="action_copy_report">نسخ التقرير</string>
+    <string name="msg_report_copied">نُسخ التقرير — الصقه في الخادم</string>
+    <string name="msg_report_copy_failed">تعذّر نسخ التقرير</string>
 </resources>
