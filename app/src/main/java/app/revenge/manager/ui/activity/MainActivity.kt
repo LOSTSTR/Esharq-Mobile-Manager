@@ -11,6 +11,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.app.ActivityCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import app.revenge.manager.R
 import app.revenge.manager.esharq.EsharqAuth
 import app.revenge.manager.ui.screen.home.HomeScreen
@@ -71,8 +73,20 @@ class MainActivity : ComponentActivity() {
      */
     private fun handleSignInCallback(intent: Intent) {
         val uri = intent.data ?: return
-        if (uri.scheme != "esharq" || uri.host != "mobile-auth") return
 
+        // Two ways in, both ours. The verified App Link is the one Android hands over on a phone
+        // where link verification completed; the custom scheme is the fallback for one where it
+        // did not. Anything else arriving here is not this flow.
+        val ours = (uri.scheme == "https" && uri.host == "esharq.org" && uri.path == "/api/mobile/installed") ||
+            (uri.scheme == "esharq" && uri.host == "mobile-auth")
+        if (!ours) return
+
+        // Completing now costs a network request — the code has to be spent for the receipt — so
+        // it cannot run on the main thread the way reading a query parameter could.
+        lifecycleScope.launch { finishSignIn(uri) }
+    }
+
+    private suspend fun finishSignIn(uri: Uri) {
         when (val result = esharqAuth.completeSignIn(uri)) {
             is EsharqAuth.Result.Success ->
                 Toast.makeText(this, R.string.esharq_signed_in, Toast.LENGTH_LONG).show()

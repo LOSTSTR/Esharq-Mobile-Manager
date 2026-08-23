@@ -7,8 +7,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.edit
+import java.security.MessageDigest
 import java.security.SecureRandom
 import android.util.Base64
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
 
 /**
  * Proving, once, that the person installing Esharq Mobile is in the Esharq server.
@@ -52,11 +58,27 @@ class EsharqAuth(context: Context) {
      */
     fun beginSignIn(): Uri {
         val nonce = newRandomId()
-        prefs.edit { putString(KEY_NONCE, nonce) }
+
+        // PKCE, and the reason for it.
+        //
+        // The receipt used to come back inside the redirect. On Android a custom scheme belongs to
+        // nobody — any app may declare esharq://mobile-auth and nothing verifies the claim — so any
+        // app on the phone could catch it. What comes back now is a code that is useless on its
+        // own: spending it requires this verifier, which is written to this app's private
+        // preferences and never appears in a URL, a browser, or an intent.
+        //
+        // The server only ever sees its SHA-256, so even the traffic that starts the flow carries
+        // nothing that can finish it.
+        val verifier = newVerifier()
+        prefs.edit {
+            putString(KEY_NONCE, nonce)
+            putString(KEY_VERIFIER, verifier)
+        }
 
         return Uri.parse(AUTH_URL).buildUpon()
             .appendQueryParameter("device", deviceId)
             .appendQueryParameter("nonce", nonce)
+            .appendQueryParameter("challenge", challengeFor(verifier))
             .build()
     }
 
@@ -76,9 +98,10 @@ class EsharqAuth(context: Context) {
      * Reads the callback the browser handed back. Rejects anything whose nonce is not the one this
      * installer just issued, which is what stops a crafted link from planting a receipt.
      */
-    fun completeSignIn(uri: Uri): Result {
+    suspend fun completeSignIn(uri: Uri): Result {
         val expected = prefs.getString(KEY_NONCE, null)
-        prefs.edit { remove(KEY_NONCE) }
+        val verifier = prefs.getString(KEY_VERIFIER, null)
+        prefs.edit { remove(KEY_NONCE); remove(KEY_VERIFIER) }
 
         if (expected == null || uri.getQueryParameter("state") != expected) {
             return Result.Failed("state_mismatch")
@@ -89,11 +112,48 @@ class EsharqAuth(context: Context) {
             else Result.Failed(error)
         }
 
-        val token = uri.getQueryParameter("token")?.takeIf { it.isNotBlank() }
-            ?: return Result.Failed("no_token")
+        val code = uri.getQueryParameter("code")?.takeIf { it.isNotBlank() }
+            ?: return Result.Failed("no_code")
+        if (verifier == null) return Result.Failed("no_verifier")
+
+        // The one request that turns the code into the receipt. Everything before this travelled
+        // through a browser; this does not.
+        val token = exchange(code, verifier) ?: return Result.Failed("exchange_failed")
 
         persist(token)
         return Result.Success(token)
+    }
+
+    /**
+     * Spend the code. POST, so the verifier is in a body rather than a URL — a query string ends up
+     * in browser history, in server logs, and in whatever else reads a Location header.
+     */
+    private suspend fun exchange(code: String, verifier: String): String? = withContext(Dispatchers.IO) {
+        runCatching {
+            val connection = (URL(EXCHANGE_URL).openConnection() as HttpURLConnection).apply {
+                requestMethod = "POST"
+                doOutput = true
+                connectTimeout = 15_000
+                readTimeout = 15_000
+                setRequestProperty("Content-Type", "application/json")
+                setRequestProperty("Accept", "application/json")
+            }
+
+            connection.outputStream.use { it.write(JSONObject().apply {
+                put("code", code)
+                put("verifier", verifier)
+            }.toString().toByteArray()) }
+
+            if (connection.responseCode != 200) {
+                connection.disconnect()
+                return@runCatching null
+            }
+
+            val body = connection.inputStream.bufferedReader().use { it.readText() }
+            connection.disconnect()
+
+            JSONObject(body).optString("token").takeIf { it.isNotBlank() }
+        }.getOrNull()
     }
 
     /** Forgets the receipt. Used when the user signs out or wants to install for another account. */
@@ -109,6 +169,23 @@ class EsharqAuth(context: Context) {
 
     fun signInIntent(): Intent = Intent(Intent.ACTION_VIEW, beginSignIn())
 
+    /**
+     * A code verifier, per RFC 7636: 43 unreserved characters from 32 random bytes.
+     *
+     * base64url without padding lands exactly in the allowed alphabet, so nothing has to be
+     * rewritten before it is compared on the server.
+     */
+    private fun newVerifier(): String {
+        val bytes = ByteArray(32).also { SecureRandom().nextBytes(it) }
+        return Base64.encodeToString(bytes, Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP)
+    }
+
+    /** The S256 challenge: the digest of the verifier, which is all the server is ever told. */
+    private fun challengeFor(verifier: String): String {
+        val digest = MessageDigest.getInstance("SHA-256").digest(verifier.toByteArray(Charsets.US_ASCII))
+        return Base64.encodeToString(digest, Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP)
+    }
+
     private fun newRandomId(): String {
         val bytes = ByteArray(24).also { SecureRandom().nextBytes(it) }
         return Base64.encodeToString(bytes, Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP)
@@ -116,8 +193,10 @@ class EsharqAuth(context: Context) {
 
     private companion object {
         const val AUTH_URL = "https://esharq.org/api/mobile/auth"
+        const val EXCHANGE_URL = "https://esharq.org/api/mobile/exchange"
         const val KEY_TOKEN = "install_token"
         const val KEY_DEVICE = "device_id"
         const val KEY_NONCE = "sign_in_nonce"
+        const val KEY_VERIFIER = "sign_in_verifier"
     }
 }

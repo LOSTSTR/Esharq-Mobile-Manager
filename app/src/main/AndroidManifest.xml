@@ -54,10 +54,29 @@
                 <action android:name="app.revenge.actions.INSTALL"/>
                 <category android:name="android.intent.category.OPENABLE"/>
             </intent-filter>
-            <!-- Where esharq.org hands the receipt back after Discord has confirmed the account is
-                 in the Esharq server. Handed back through the app's own scheme rather than shown
-                 on a page: a receipt printed in a browser is a receipt that ends up in a
-                 screenshot. -->
+            <!-- Where esharq.org hands back after Discord has confirmed the account is in the
+                 Esharq server.
+
+                 A verified App Link, not a custom scheme. autoVerify makes Android fetch
+                 https://esharq.org/.well-known/assetlinks.json and check this app's package name
+                 and signing certificate against it; only then is it given these links, and no
+                 other app can be. A custom scheme has no owner at all — any app may declare
+                 esharq://mobile-auth, nothing verifies the claim, and that is precisely how an
+                 install receipt could be caught by an app with nothing to do with the install. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="https" android:host="esharq.org"
+                      android:path="/api/mobile/installed"/>
+            </intent-filter>
+
+            <!-- Kept as a fallback for a phone where link verification never completed; some do
+                 not, and an installer that cannot receive its own callback cannot install.
+
+                 Safe now in a way it was not before: what arrives here is a two-minute code that
+                 is worthless without the verifier this app kept to itself, not a thirty-day
+                 receipt. Whoever else declares the scheme catches nothing they can spend. -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
